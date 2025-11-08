@@ -69,4 +69,26 @@ class Post extends Model
 
         return asset('storage/' . $this->image_path);
     }
+
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    public function bookmarkedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
+    }
+
+    public function isBookmarkedBy($userId)
+    {
+        return $this->bookmarks()->where('user_id', $userId)->exists();
+    }
+
+    public function scopeWithUserBookmark($query, $userId)
+    {
+        return $query->with(['bookmarks' => function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }]);
+    }
 }

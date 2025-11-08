@@ -105,4 +105,19 @@ class User extends Authenticatable
     {
         return $this->receivedLikes()->where('is_read', false)->count();
     }
+
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    public function bookmarkedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks')->withTimestamps();
+    }
+
+    public function hasBookmarkedPost($postId)
+    {
+        return $this->bookmarks()->where('post_id', $postId)->exists();
+    }
 }

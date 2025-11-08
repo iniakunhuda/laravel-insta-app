@@ -4,8 +4,8 @@
         <div class="px-4 py-6">
             <div class="flex items-start gap-6 mb-6">
                 <div class="flex-shrink-0">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 p-0.5">
-                        <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-2xl font-semibold text-gray-700">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br p-0.5">
+                        <div class="w-full h-full rounded-full bg-gray-300 flex items-center justify-center text-2xl font-semibold text-gray-700">
                             {{ $user->initials() }}
                         </div>
                     </div>
@@ -82,11 +82,11 @@
                         <path d="M4 4h7v7H4V4zm0 9h7v7H4v-7zm9-9h7v7h-7V4zm0 9h7v7h-7v-7z"/>
                     </svg>
                 </button>
-                <button class="flex-1 py-3 border-t-2 border-transparent text-gray-400">
-                    <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                <a href="{{ route('bookmarks.index') }}" class="flex-1 py-3 border-t-2 border-transparent text-gray-400">
+                    <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5v14l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z"/>
                     </svg>
-                </button>
+                </a>
             </div>
         </div>
 

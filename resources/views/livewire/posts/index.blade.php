@@ -24,12 +24,12 @@
             </div>
 
             <!-- Post Image -->
-            <div class="relative">
+            <a href="{{ route('posts.show', $post) }}" class="relative">
                 <img src="{{ $post->post_image_url }}" alt="Post" class="w-full">
                 {{-- <div class="absolute top-3 right-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
                     1/3
                 </div> --}}
-            </div>
+            </a>
 
             <!-- Post Actions -->
             <div class="p-3">
@@ -52,11 +52,20 @@
                             </svg>
                         </button>
                     </div>
-                    <button>
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                        </svg>
-                    </button>
+
+                    <form method="POST" action="{{ $post->isBookmarkedBy(auth()->id()) ? route('bookmarks.destroy', $post) : route('bookmarks.store', $post) }}">
+                        @csrf
+
+                        @if ($post->isBookmarkedBy(auth()->id()))
+                            @method('DELETE')
+                        @endif
+
+                        <button>
+                            <svg class="w-7 h-7 {{ $post->isBookmarkedBy(auth()->id()) ? 'fill-black' : 'fill-none' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Likes Count -->

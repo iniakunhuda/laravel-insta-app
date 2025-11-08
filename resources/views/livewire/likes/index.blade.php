@@ -1,10 +1,14 @@
 <x-layouts.app-simple>
     <div class="max-w-2xl mx-auto px-4 pt-18 pb-20">
+
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold">Notifications</h1>
+            <p class="text-gray-600 text-sm mt-1">
+                Here are recent likes on your posts
+            </p>
+        </div>
+
         <div class="bg-white rounded-lg shadow">
-            {{-- Header --}}
-            <div class="flex items-center justify-between px-4 py-3 border-b">
-                <h2 class="font-semibold text-lg">Notifications</h2>
-            </div>
 
             {{-- Likes List --}}
             <div class="divide-y">

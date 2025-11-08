@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookmarkController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PostController;
@@ -13,6 +14,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/posts/{post}/like', [LikeController::class, 'store'])->name('likes.store');
     Route::delete('/posts/{post}/like', [LikeController::class, 'destroy'])->name('likes.destroy');
     Route::get('/likes', [LikeController::class, 'index'])->name('likes.index');
+
+    Route::post('/posts/{post}/bookmark', [BookmarkController::class, 'store'])->name('bookmarks.store');
+    Route::delete('/posts/{post}/bookmark', [BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
+    Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
