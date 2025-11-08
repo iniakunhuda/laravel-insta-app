@@ -12,6 +12,11 @@ class Like extends Model
     protected $fillable = [
         'user_id',
         'post_id',
+        'is_read',
+    ];
+
+    protected $casts = [
+        'is_read' => 'boolean',
     ];
 
     public function user()

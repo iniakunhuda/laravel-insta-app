@@ -5,7 +5,7 @@
         <article class="bg-white border border-gray-200 rounded-lg mb-4">
             <!-- Post Header -->
             <div class="flex items-center justify-between p-3">
-                <div class="flex items-center gap-3">
+                <a class="flex items-center gap-3" href="{{ route('profile', ['username' => $post->user->username]) }}">
                     <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                         <span class="text-sm font-semibold text-gray-700">{{ $post->user->initials() }}</span>
                     </div>
@@ -13,7 +13,7 @@
                         <p class="font-semibold text-sm">{{ $post->user->name }}</p>
                         <p class="text-xs text-gray-500">Tokyo, Japan</p>
                     </div>
-                </div>
+                </a>
                 <button class="text-gray-600">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="5" r="2"/>
@@ -34,7 +34,7 @@
             <!-- Post Actions -->
             <div class="p-3">
                 <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-start gap-4">
                         <form method="POST" action="{{ $post->isLikedBy(auth()->id()) ? route('likes.destroy', $post) : route('likes.store', $post) }}">
                             @csrf
                             @if ($post->isLikedBy(auth()->id()))
@@ -49,11 +49,6 @@
                         <button>
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
-                        </button>
-                        <button>
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                             </svg>
                         </button>
                     </div>

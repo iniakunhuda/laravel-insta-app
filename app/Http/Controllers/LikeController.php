@@ -7,6 +7,19 @@ use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
+    public function index()
+    {
+        $likes = auth()->user()->receivedLikes()
+            ->with(['user', 'post'])
+            ->latest()
+            ->get();
+
+        // Mark all as read
+        auth()->user()->receivedLikes()->where('is_read', false)->update(['is_read' => true]);
+
+        return view('livewire.likes.index', compact('likes'));
+    }
+
     public function store(Post $post)
     {
         $user = auth()->user();

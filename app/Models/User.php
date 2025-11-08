@@ -88,4 +88,21 @@ class User extends Authenticatable
     {
         return $this->likes()->where('post_id', $postId)->exists();
     }
+
+    public function receivedLikes()
+    {
+        return $this->hasManyThrough(
+            Like::class,
+            Post::class,
+            'user_id', // Foreign key on posts table
+            'post_id', // Foreign key on likes table
+            'id', // Local key on users table
+            'id' // Local key on posts table
+        )->whereColumn('likes.user_id', '!=', 'posts.user_id');
+    }
+
+    public function unreadLikesCount()
+    {
+        return $this->receivedLikes()->where('is_read', false)->count();
+    }
 }

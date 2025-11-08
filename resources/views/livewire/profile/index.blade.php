@@ -30,8 +30,9 @@
 
             <div class="mb-4">
                 <div class="font-semibold">{{ $user->name }}</div>
-                <div class="text-sm text-gray-600">Profile Description</div>
-                <div class="text-sm text-gray-600">Everything is designed.</div>
+                <div class="text-sm text-gray-600">
+                    {{ $user->bio ?? 'This user has no bio yet.' }}
+                </div>
             </div>
 
             @if(auth()->id() === $user->id)
@@ -93,7 +94,7 @@
         <div class="grid grid-cols-3 gap-1">
             @foreach($posts as $post)
                 <a href="{{ route('posts.show', $post) }}" class="aspect-square relative group">
-                    <img src="{{ asset('storage/' . $post->image_path) }}" alt="" class="w-full h-full object-cover">
+                    <img src="{{ $post->post_image_url }}" alt="" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-6 text-white">
                         <div class="flex items-center gap-2">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

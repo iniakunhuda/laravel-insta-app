@@ -13,6 +13,7 @@
                     <input
                         type="file"
                         name="image"
+                        id="imageInput"
                         accept="image/*"
                         required
                         class="block w-full text-sm text-gray-500
@@ -25,6 +26,10 @@
                     @error('image')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+
+                    <div id="imagePreview" class="mt-4 hidden">
+                        <img id="preview" class="w-full h-auto rounded-lg" alt="Image preview">
+                    </div>
                 </div>
 
                 <div class="mb-6">
@@ -49,7 +54,8 @@
                     >
                         Share Post
                     </button>
-                    <a
+
+                    <button
                         href="{{ route('home') }}"
                         class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg text-center transition"
                     >
@@ -59,4 +65,18 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </x-layouts.app-simple>
