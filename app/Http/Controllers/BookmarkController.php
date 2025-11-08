@@ -29,6 +29,13 @@ class BookmarkController extends Controller
                 'post_id' => $post->id,
             ]);
 
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'bookmarked' => true
+                ]);
+            }
+
             return back()->with('success', 'Post bookmarked!');
         }
 
@@ -40,6 +47,13 @@ class BookmarkController extends Controller
         Bookmark::where('user_id', auth()->id())
             ->where('post_id', $post->id)
             ->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'bookmarked' => false
+            ]);
+        }
 
         return back()->with('success', 'Bookmark removed!');
     }

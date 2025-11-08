@@ -40,7 +40,7 @@
 
                         {{-- Post Image --}}
                         <a href="{{ route('posts.show', $post) }}">
-                            <img src="{{ asset('storage/' . $post->image_path) }}" alt="Post image" class="w-full">
+                            <img src="{{ $post->post_image_url }}" alt="Post image" class="w-full">
                         </a>
 
                         {{-- Post Actions --}}

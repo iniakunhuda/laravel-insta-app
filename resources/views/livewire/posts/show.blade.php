@@ -2,7 +2,109 @@
     <div class="max-w-2xl mx-auto px-4 pt-20 pb-20">
 
         {{-- Post Content --}}
-        <div class="pb-20">
+        <div class="pb-20"
+            x-data="{
+                liked: {{ $post->isLikedBy(auth()->id()) ? 'true' : 'false' }},
+                bookmarked: {{ $post->isBookmarkedBy(auth()->id()) ? 'true' : 'false' }},
+                likesCount: {{ $post->likes_count }},
+                commentsCount: {{ $post->comments->count() }},
+                comments: @js($post->comments->map(fn($c) => [
+                    'id' => $c->id,
+                    'user_name' => $c->user->name,
+                    'user_initials' => $c->user->initials(),
+                    'user_username' => $c->user->username,
+                    'content' => $c->content,
+                    'created_at' => $c->created_at->diffForHumans(),
+                    'can_delete' => auth()->user()?->can('delete', $c) ?? false
+                ])),
+                content: '',
+                async toggleLike() {
+                    const url = this.liked ? '{{ route('likes.destroy', $post) }}' : '{{ route('likes.store', $post) }}';
+                    const method = this.liked ? 'DELETE' : 'POST';
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (response.ok) {
+                            this.liked = !this.liked;
+                            this.likesCount = this.liked ? this.likesCount + 1 : this.likesCount - 1;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                },
+                async toggleBookmark() {
+                    const url = this.bookmarked ? '{{ route('bookmarks.destroy', $post) }}' : '{{ route('bookmarks.store', $post) }}';
+                    const method = this.bookmarked ? 'DELETE' : 'POST';
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (response.ok) {
+                            this.bookmarked = !this.bookmarked;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                },
+                async submitComment() {
+                    if (!this.content.trim()) return;
+
+                    try {
+                        const response = await fetch('{{ route('comments.store', $post) }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ content: this.content })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.content = '';
+                            this.commentsCount++;
+                            if (data.comment) {
+                                this.comments.push(data.comment);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                },
+                async deleteComment(commentId, index) {
+                    if (!confirm('Are you sure you want to delete this comment?')) return;
+
+                    try {
+                        const response = await fetch(`/comments/${commentId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.comments.splice(index, 1);
+                            this.commentsCount--;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                }
+            }">
             <div class="bg-white border border-gray-200 rounded-lg">
                 {{-- Post Header --}}
                 <div class="flex items-center justify-between px-4 py-3">
@@ -28,42 +130,27 @@
                 <div class="px-4 py-3">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-start gap-4">
-                            @if($post->isLikedBy(auth()->id()))
-                                <form action="{{ route('likes.destroy', $post) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-0">
-                                        <svg class="w-7 h-7 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            @else
-                                <form action="{{ route('likes.store', $post) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="p-0">
-                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            @endif
+                            <button @click="toggleLike()" type="button" class="p-0">
+                                <svg class="w-7 h-7" :class="liked ? 'fill-red-500 text-red-500' : 'fill-none'" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
                             <button>
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
                             </button>
                         </div>
-                        <button>
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                        <button @click="toggleBookmark()" type="button">
+                            <svg class="w-7 h-7" :class="bookmarked ? 'fill-black' : 'fill-none'" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                             </svg>
                         </button>
                     </div>
 
-                    @if($post->likes_count > 0)
-                        <div class="font-semibold mb-2">{{ number_format($post->likes_count) }} likes</div>
-                    @endif
+                    <template x-if="likesCount > 0">
+                        <div class="font-semibold mb-2" x-text="`${likesCount.toLocaleString()} likes`"></div>
+                    </template>
 
                     @if($post->caption)
                         <div class="mb-2">
@@ -76,44 +163,38 @@
                 </div>
 
                 {{-- Comments Section --}}
-                @if($post->comments->count() > 0)
+                <template x-if="comments.length > 0">
                     <div class="border-t border-gray-200">
-                        @foreach($post->comments as $comment)
+                        <template x-for="(comment, index) in comments" :key="comment.id">
                             <div class="px-4 py-3 flex items-start justify-between">
                                 <div class="flex items-start gap-3 flex-1">
-                                    <a href="{{ route('profile', $comment->user) }}" class="flex-shrink-0">
+                                    <a :href="`/profile/${comment.user_username}`" class="flex-shrink-0">
                                         <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-                                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-xs font-semibold text-gray-700">
-                                                {{ $comment->user->initials() }}
+                                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-xs font-semibold text-gray-700" x-text="comment.user_initials">
                                             </div>
                                         </div>
                                     </a>
                                     <div class="flex-1">
                                         <div>
-                                            <a href="{{ route('profile', $comment->user) }}" class="font-semibold">{{ $comment->user->name }}</a>
-                                            <span class="ml-2">{{ $comment->content }}</span>
+                                            <a :href="`/profile/${comment.user_username}`" class="font-semibold" x-text="comment.user_name"></a>
+                                            <span class="ml-2" x-text="comment.content"></span>
                                         </div>
-                                        <div class="text-xs text-gray-500 mt-1">{{ $comment->created_at->diffForHumans() }}</div>
+                                        <div class="text-xs text-gray-500 mt-1" x-text="comment.created_at"></div>
                                     </div>
                                 </div>
-                                @can('delete', $comment)
-                                    <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500 text-xs font-semibold ml-2">Delete</button>
-                                    </form>
-                                @endcan
+                                <template x-if="comment.can_delete">
+                                    <button @click="deleteComment(comment.id, index)" type="button" class="text-red-500 text-xs font-semibold ml-2">Delete</button>
+                                </template>
                             </div>
-                        @endforeach
+                        </template>
                     </div>
-                @endif
+                </template>
             </div>
         </div>
 
         @auth
-        <div class="left-0 right-0 bg-white border-t border-gray-200 pb-safe">
-            <form action="{{ route('comments.store', $post) }}" method="POST" class="flex items-center px-4 py-3 gap-3">
-                @csrf
+        <div class="left-0 right-0 bg-white border-t border-gray-200 pb-safe" x-data="{ content: '', commentsCount: {{ $post->comments->count() }}, comments: [], async submitComment() { if (!this.content.trim()) return; try { const response = await fetch('{{ route('comments.store', $post) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ content: this.content }) }); if (response.ok) { const data = await response.json(); this.content = ''; this.commentsCount++; if (data.comment) { this.comments.push(data.comment); } } } catch (error) { console.error('Error:', error); } } }">
+            <form @submit.prevent="submitComment" class="flex items-center px-4 py-3 gap-3">
                 <a href="{{ route('profile', auth()->user()) }}" class="flex-shrink-0">
                     <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                         <span class="text-sm font-semibold text-gray-700">
@@ -121,10 +202,10 @@
                         </span>
                     </div>
                 </a>
-                <input type="text" name="content" placeholder="Add a comment..." class="flex-1 border-0 focus:ring-0 p-0" required>
+                <input type="text" x-model="content" placeholder="Add a comment..." class="flex-1 border-0 focus:ring-0 p-0" required>
                 <button type="submit" class="text-blue-500 font-semibold">Post</button>
             </form>
         </div>
         @endauth
     </div>
-</x-layouts.app>
+</x-layouts.app-simple>
