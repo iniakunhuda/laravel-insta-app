@@ -15,7 +15,7 @@
 
 
                 <a href="{{route('home')}}" class="text-center">
-                    <img src="{{url('img/logo-instagram.png')}}" style="width:350px;" alt="">
+                    <img src="{{asset('img/logo-instagram.png')}}" style="width:350px;" alt="">
                 </a>
                 <div class="flex flex-col gap-6">
                     {{ $slot }}

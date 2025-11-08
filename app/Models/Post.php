@@ -60,4 +60,13 @@ class Post extends Model
             $q->where('user_id', $userId);
         }]);
     }
+
+    public function getPostImageUrlAttribute()
+    {
+        if (in_array($this->image_path, ['posts/sunset.jpg', 'posts/coffee.jpg', 'posts/adventure.jpg'])) {
+            return asset('img/' . basename($this->image_path));
+        }
+
+        return asset('storage/' . $this->image_path);
+    }
 }

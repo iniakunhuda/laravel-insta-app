@@ -1,31 +1,13 @@
 <x-layouts.app-simple>
-    <div class="min-h-screen bg-white">
-        {{-- Header --}}
-        <div class="sticky top-0 z-10 bg-white border-b border-gray-200">
-            <div class="flex items-center justify-between px-4 py-3">
-                <a href="{{ url()->previous() }}" class="text-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </a>
-                <span class="font-semibold">Post</span>
-                <button class="text-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
+    <div class="max-w-2xl mx-auto px-4 pt-20 pb-20">
 
         {{-- Post Content --}}
         <div class="pb-20">
             {{-- Post Header --}}
             <div class="flex items-center justify-between px-4 py-3">
                 <a href="{{ route('profile', $post->user) }}" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 p-0.5">
-                        <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-sm font-semibold text-gray-700">
-                            {{ $post->user->initials() }}
-                        </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                        <span class="text-sm font-semibold text-gray-700">{{ $post->user->initials() }}</span>
                     </div>
                     <span class="font-semibold">{{ $post->user->name }}</span>
                 </a>
@@ -38,7 +20,7 @@
 
             {{-- Post Image --}}
             <div class="w-full aspect-square bg-gray-100">
-                <img src="{{ asset('storage/' . $post->image_path) }}" alt="" class="w-full h-full object-cover">
+                <img src="{{ $post->post_image_url }}" alt="" class="w-full h-full object-cover">
             </div>
 
             {{-- Post Actions --}}
@@ -104,7 +86,7 @@
                         <div class="px-4 py-3 flex items-start justify-between">
                             <div class="flex items-start gap-3 flex-1">
                                 <a href="{{ route('profile', $comment->user) }}" class="flex-shrink-0">
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 p-0.5">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                                         <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-xs font-semibold text-gray-700">
                                             {{ $comment->user->initials() }}
                                         </div>
@@ -131,15 +113,14 @@
             @endif
         </div>
 
-        {{-- Comment Input --}}
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe">
+        <div class="left-0 right-0 bg-white border-t border-gray-200 pb-safe">
             <form action="{{ route('comments.store', $post) }}" method="POST" class="flex items-center px-4 py-3 gap-3">
                 @csrf
                 <a href="{{ route('profile', auth()->user()) }}" class="flex-shrink-0">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 p-0.5">
-                        <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-xs font-semibold text-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                        <span class="text-sm font-semibold text-gray-700">
                             {{ auth()->user()->initials() }}
-                        </div>
+                        </span>
                     </div>
                 </a>
                 <input type="text" name="content" placeholder="Add a comment..." class="flex-1 border-0 focus:ring-0 p-0" required>

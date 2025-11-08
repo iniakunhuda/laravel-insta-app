@@ -25,10 +25,10 @@
 
             <!-- Post Image -->
             <div class="relative">
-                <img src="{{ asset('storage/' . $post->image_path) }}" alt="Post" class="w-full">
-                <div class="absolute top-3 right-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                <img src="{{ $post->post_image_url }}" alt="Post" class="w-full">
+                {{-- <div class="absolute top-3 right-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
                     1/3
-                </div>
+                </div> --}}
             </div>
 
             <!-- Post Actions -->
@@ -77,9 +77,9 @@
 
                 <!-- View Comments -->
                 @if ($post->comments_count > 0)
-                <button class="text-sm text-gray-500 mb-2">
+                <a href="{{ route('posts.show', $post) }}" class="text-sm text-gray-500 mb-2">
                     View all {{ number_format($post->comments_count) }} comments
-                </button>
+                </a>
                 @endif
 
                 <!-- Recent Comments -->

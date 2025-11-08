@@ -17,11 +17,11 @@
                             <div class="text-sm text-gray-500">Posts</div>
                         </div>
                         <div>
-                            <div class="text-xl font-semibold">834</div>
+                            <div class="text-xl font-semibold">0</div>
                             <div class="text-sm text-gray-500">Followers</div>
                         </div>
                         <div>
-                            <div class="text-xl font-semibold">162</div>
+                            <div class="text-xl font-semibold">0</div>
                             <div class="text-sm text-gray-500">Following</div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
 
             <div class="mb-4">
                 <div class="font-semibold">{{ $user->name }}</div>
-                <div class="text-sm text-gray-600">Digital goodies designer @pixsellz</div>
+                <div class="text-sm text-gray-600">Profile Description</div>
                 <div class="text-sm text-gray-600">Everything is designed.</div>
             </div>
 
