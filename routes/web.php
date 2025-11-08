@@ -39,7 +39,12 @@ use App\Http\Controllers\CommentController;
 // });
 
 
-Route::get('/', [PostController::class, 'index'])->name('feed.index')->name('home');
+Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/profile/{username}', [PostController::class, 'profile'])->name('profile');
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+
+
+
 Route::middleware(['auth'])->group(function () {
     Route::post('/posts/{post}/like', [LikeController::class, 'store'])->name('likes.store');
     Route::delete('/posts/{post}/like', [LikeController::class, 'destroy'])->name('likes.destroy');

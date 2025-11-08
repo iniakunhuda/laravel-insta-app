@@ -53,4 +53,11 @@ class Post extends Model
             $q->where('user_id', $userId);
         }]);
     }
+
+    public function loadUserLike($userId)
+    {
+        $this->load(['likes' => function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }]);
+    }
 }
